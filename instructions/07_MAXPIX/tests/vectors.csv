@@ -1,0 +1,13 @@
+input_hex,expected_decimal,coverage
+0x0A1E2805,40,homework example
+0x00000000,0,lower bound / all zero
+0xFF000001,255,upper bound
+0x01020304,4,ascending bytes
+0x04030201,4,descending bytes
+0x7F807F80,128,unsigned boundary across 127/128
+0x80808080,128,equal bytes
+0xFFFFFFFF,255,all maximum bytes
+0x0100FF00,255,maximum in byte 1
+0x000000FF,255,maximum in byte 0
+0x01010101,1,equal low values
+0x00010000,1,maximum in byte 2
