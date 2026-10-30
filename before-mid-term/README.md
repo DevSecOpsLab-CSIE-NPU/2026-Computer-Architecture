@@ -152,12 +152,11 @@ CLIP 放在同類別的 `0000001`。
 | ABS(1111410057／#23) | 計算 32 位元有號整數的絕對值並處理邊界 | `abs_rv32im(-5)` → `5`(RV32IM) | CP2 無分支 `srai`＋`xor`＋`sub`(核心 3 條);尚無自訂編碼 | 靜態 4→1(75.0%)、核心 3→1(66.7%);動態 40→10(75.0%)、核心 30→10(66.7%) | 整合 `001/0000010/0001011`,`0x0405150B`;原提交:無 |
 | CLIP(1113405016／#1) | 將輸入的 32 位元有號整數限制在 −128 至 127 的範圍 | `clip(200)` → `127`;`clip(-200)` → `-128`(RV32IM) | CP2 用 `li`＋`bge`＋`blt`(靜態 12 條);尚無自訂編碼 | 靜態 12→1(91.7%);動態 4–6→1(75.0–83.3%) | 整合 `000/0000001/0001011`,`0x0205050B`;原提交:無 |
 | MAC(教師示範題／mac_demo_v4) | 計算兩數 32 位元乘積並累加到目的暫存器 | `mac a0, a1, a2`；`a0=5, a1=3, a2=4` → `a0=17` | `rd` 為累加器;32×32 乘法取低 32 位;另有 R4 與 `mac2` 封包雙 16-bit 變體;`mac2` 部分積 512 位元 | 純量 8→7(12.5%)、1.14×;`mac2` 12→7(41.7%)、1.71×;pipeline 1.40×(延遲 1)、1.27×(延遲 2);clock×1.2→1.17× | 原提交 `mac` `000/0000000/0001011`,`0x00C5850B`;`mac2` `010/0000000/0001011`,`0x00C5A50B`;R4 `001/0000000`,`0x68C5950B`;整合待分配(與 THRESHOLD 衝突) |
-| TOP2_4(進階學長示範題) | 從 4 個封包 INT8 中找出最大與第二大值 | `top2_4(packed)` → `(max, second)`(示範題;介面待補) | packed 4×INT8;比較網路找最大與第二大;展示 packed data 與比較網路 | 待補(repo 未提供實作數據) | 待補(repo 未提供編碼) |
+| TOP2_4(進階學長示範題／top2_4_demo) | 從 4 個封包 INT8 中找出最大與第二大值 | `top2_4 a0, a1`；`a1=0x7F80FF01` → `a0=0x0000017F` | packed 4×INT8;5 個有號比較器;`max=max(a1,c1)`、`second=max(min(a1,c1),max(b1,d1))`;重複值允許 | 核心 30→1(96.7%);每字迴圈 34→5(85.3%);CPI=1 同頻 6.80×;clock×2→3.40×;clock×3→2.27× | 整合 `110/0000000/0001011`,`0x0005E50B`;`rs2` 忽略(標準填 0) |
 
 > 詳細表的機器可讀版見 [`instruction_detailed_summary.csv`](instruction_detailed_summary.csv)。
 > IC 減少量只比較指令數,不是 cycle 或執行時間的加速比。
-> MAC 數據來自 `mac_demo/mac_demo_v4`;TOP2_4 僅列於 README／HOMEWORK,
-> repo 尚無實作檔案,因此 IC 與編碼欄位待補。
+> MAC 數據來自 `mac_demo/mac_demo_v4`;TOP2_4 數據來自 `top2_4_demo/`。
 > AVG、MAXPIX 及其餘 8 題尚無完整 CP3 資料,見第五節。
 
 ## 三、資料來源
@@ -177,6 +176,8 @@ CLIP 放在同類別的 `0000001`。
    `instructions/02_MIN/references/measurements.md`。
 8. **ABS**:PR #23 `instructions/01_ABS/report/CP2.md`。
 9. **CLIP**:PR #1 `report/CP2.md`。
+10. **TOP2_4**:`top2_4_demo/README.md`、`top2_4_demo/benchmark/results.csv`;
+    baseline 為 `riscv64-elf-gcc 16.2.0 -O2` 的 30 條本體,模型估計非 Ripes 實測。
 
 ## 四、判讀注意事項
 

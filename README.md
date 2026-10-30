@@ -10,6 +10,7 @@
 |---|---|
 | [HOMEWORK.md](HOMEWORK.md) | 作業說明:分組規則、選題、指令格式、繳交與報告規範、題目語意規格 |
 | `mac_demo/` | 教師示範題 `MAC` 的編碼、C 參考實作、5 級 pipeline 模型與時序圖 |
+| [`top2_4_demo/`](top2_4_demo/) | 示範題 `TOP2_4` 的編碼、C 參考實作、比較網路、測試與指令數 benchmark |
 
 學生相關的規定以 [HOMEWORK.md](HOMEWORK.md) 為準。
 
@@ -44,10 +45,14 @@
 | 題目 | 負責 | 用途 |
 |---|---|---|
 | `MAC`(乘加) | 教師 / 助教 | Week 7 課堂示範 |
-| `TOP2_4`(4×INT8 找最大與第二大) | 進階學長 | 展示 packed data 與比較網路的設計深度 |
+| [`TOP2_4`](top2_4_demo/)(4×INT8 找最大與第二大) | 進階學長 | 展示 packed data 與比較網路的設計深度 |
 
 #### MAC
 ![img](mac_demo/mac_demo_v4/figures/ablation.png)
+
+#### TOP2_4
+
+[`top2_4_demo/`](top2_4_demo/) 提供 `top2_4` 的 R-type 編碼、C baseline、RISC-V 內嵌組語、黃金模型、測試與指令數 benchmark。`top2_4` 將 `rs1` 的四個有號 INT8 lane 排序後,把最大值與第二大值寫入 `rd[7:0]` 與 `rd[15:8]`;整合編碼為 `funct3=110`、`funct7=0000000`、opcode `0001011`。
 
 ## 統一指令格式
 
