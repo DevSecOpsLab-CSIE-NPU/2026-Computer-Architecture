@@ -1,0 +1,24 @@
+instruction,variant,group_pr,baseline_impl,static_baseline,static_custom,static_reduction,dynamic_baseline,dynamic_custom,dynamic_reduction,method,status,source
+CLZ,main,1114405003 (PR #31),segmented 16/8/4/2/1,25,1,96.0%,3-23,1,66.7-95.7%,Python RV32I trace; QEMU baseline,CP3 complete (PR open),PR #31 instructions/19_CLZ/report/CP3.md
+BITREV,function form,1114405020 (PR #33),five-stage mask swap,36,2,94.4%,36,2,94.4% (estimated),objdump static; design estimate,CP3 complete; CPU not measured,PR #33 group17_BITREV/report/CP3.md
+BITREV,inline,1114405020 (PR #33),five-stage mask swap,36,1,97.2%,36,1,97.2% (estimated),objdump static; design estimate,CP3 complete; CPU not measured,PR #33 group17_BITREV/report/CP3.md
+ROTL,single GCC -O2 variable,1114405055 (PR #21),sll + neg + srl + or (+andi),5,1,80.0%,5,1,80.0%,custom Python RV32IM simulator,CP3 partial (3.6/4/5/AI pending),PR #21 instructions/15_ROTL/report/CP3.md
+ROTL,single handwritten branchless,1114405055 (PR #21),sll + neg + srl + or,4,1,75.0%,4,1,75.0%,custom Python RV32IM simulator,CP3 partial (3.6/4/5/AI pending),PR #21 instructions/15_ROTL/report/CP3.md
+ROTL,single constant rotate,1114405055 (PR #21),slli + srli + add,3,1,66.7%,3,1,66.7%,custom Python RV32IM simulator,CP3 partial (3.6/4/5/AI pending),PR #21 instructions/15_ROTL/report/CP3.md
+ROTL,ChaCha20,1114405055 (PR #21),GCC -O2 RV32IM,236,177,25.0%,1919,1284,33.1%,custom Python RV32IM simulator,CP3 partial (3.6/4/5/AI pending),PR #21 instructions/15_ROTL/report/figures/instruction_counts.md
+ROTL,RC5 setup,1114405055 (PR #21),GCC -O2 RV32IM,62,57,8.1%,2467,2000,18.9%,custom Python RV32IM simulator,CP3 partial (3.6/4/5/AI pending),PR #21 instructions/15_ROTL/report/figures/instruction_counts.md
+ROTL,RC5 encrypt,1114405055 (PR #21),GCC -O2 RV32IM,29,21,27.6%,227,131,42.3%,custom Python RV32IM simulator,CP3 partial (3.6/4/5/AI pending),PR #21 instructions/15_ROTL/report/figures/instruction_counts.md
+THRESHOLD,single (custom = threshold + ret),"group06 (PR #26, #12)",signed bge branch,5,2,60.0%,3,2,33.3%,"Ripes v2.3.0 (RV32_SS, RV32IM)",CP3 draft; custom includes ret,PR #26 instructions/06_THRESHOLD/rv32im/count_result.md; PR #12 report/CP3.md
+THRESHOLD,loop N=8 threshold=5,"group06 (PR #26, #12)",RV32IM branch loop,,,,77,64,16.9%,CP3 model estimate; CPI=1 speedup 1.20x,CP3 draft; not measured,PR #12 report/CP3.md
+THRESHOLD,loop N=1024 threshold=128,"group06 (PR #26, #12)",RV32IM branch loop,,,,8693,7176,17.5%,CP3 model estimate; CPI=1 speedup 1.21x,CP3 draft; not measured,PR #12 report/CP3.md
+THRESHOLD,loop N=1024 + 20% slower clock,"group06 (PR #26, #12)",RV32IM branch loop,,,,8693,7176,17.5%,CP3 model estimate; speedup 1.01x at T=1.2,CP3 draft; not measured,PR #12 report/CP3.md
+ABSDIFF,core,1114405017 (PR #32),sub + bge + conditional sub,3,1,66.7%,2-3,1,50.0-66.7%,static and path count; custom instruction not executed,CP3 complete; funct3/funct7 unconfirmed,PR #32 report/CP3.md
+ABSDIFF,including ret,1114405017 (PR #32),sub + bge + conditional sub + ret,4,1,75.0%,3-4,1,66.7-75.0%,static and path count; custom instruction not executed,CP3 complete; funct3/funct7 unconfirmed,PR #32 report/CP3.md
+SAD,core,"1114405036 (PR #18, #34)",slt + 2x sub + beq + add,6,1,83.3%,5-6,1,80.0-83.3%,manual instruction count,CP2 only + CP3 encoding fragment,PR #18 instructions/12_SAD/report/CP2.md
+SAD,including ret,"1114405036 (PR #18, #34)",slt + 2x sub + beq + add + ret,7,1,85.7%,6-7,1,83.3-85.7%,manual instruction count,CP2 only + CP3 encoding fragment,PR #18 instructions/12_SAD/report/CP2.md
+MIN,branch,Edwin-Tu (PR #25),blt + addi + jalr,3,1,66.7%,38,14,63.2%,Python RV32I interpreter; 14 test cases,CP2 only,PR #25 instructions/02_MIN/report/CP2.md
+MIN,C baseline,Edwin-Tu (PR #25),GCC C baseline,4,1,75.0%,46,14,69.6%,Python RV32I interpreter; 14 test cases,CP2 only,PR #25 instructions/02_MIN/report/CP2.md
+MIN,branchless,Edwin-Tu (PR #25),branchless RV32I,6,1,83.3%,84,14,83.3%,Python RV32I interpreter; 14 test cases,CP2 only,PR #25 instructions/02_MIN/report/CP2.md
+ABS,including ret,1111410057 (PR #23),srai + xor + sub + ret,4,1,75.0%,40,10,75.0%,Ripes 5-stage; 10 test cases,CP2 only,PR #23 instructions/01_ABS/report/CP2.md
+ABS,core,1111410057 (PR #23),srai + xor + sub,3,1,66.7%,30,10,66.7%,Ripes 5-stage; 10 test cases,CP2 only,PR #23 instructions/01_ABS/report/CP2.md
+CLIP,main,1113405016 (PR #1),li + bge + blt branches,12,1,91.7%,4-6,1,75.0-83.3%,Ripes,CP2 only,PR #1 report/CP2.md
