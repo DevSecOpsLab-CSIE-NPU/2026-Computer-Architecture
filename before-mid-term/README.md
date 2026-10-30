@@ -5,7 +5,8 @@
 > 定義:本表所稱「效率提升」為**指令數減少率(IC reduction)**,計算式為
 > `(baseline − 自訂) ÷ baseline × 100%`。這不是執行時間、CPI 或 clock cycle
 > 的加速比;依 HOMEWORK.md §5.4,CP3 不要求 cycle 數,pipeline 相關分析待 CP4–CP6。
-> 第二節整理各組 instruction 的語意、編碼與設計重點。
+> 第二節整理各組 instruction 的語意、編碼與設計重點;2.5 另提整合多條
+> 指令的 custom-0 編碼建議。
 
 ## 一、總表
 
@@ -55,6 +56,7 @@ MIN／ABS／CLIP 尚無 CP3 編碼。
 ### 2.2 設計總表
 
 同一內容的機器可讀版見 [`instruction_design.csv`](instruction_design.csv)。
+此表保留各組原提交的編碼;若採用 2.5 的整合分配,機器碼會改變。
 
 | 題目(PR) | 語意(公式) | 運算元／結果 | 設計重點 | 機器碼範例 | 狀態 |
 |---|---|---|---|---|---|
@@ -84,16 +86,53 @@ MIN／ABS／CLIP 尚無 CP3 編碼。
 
 ### 2.4 設計觀察
 
-- **運算型態**:CLZ、BITREV 是單輸入(`rs2` 固定 0);ROTL、THRESHOLD、
-  ABSDIFF、SAD 是雙輸入;SAD 的 `rd` 同時是累加器,屬 read-modify-write。
+- **運算型態**:CLZ、BITREV、ABS、CLIP 是單輸入(CLIP 的上下界隱含,
+  `rs2` 固定 0);ROTL、THRESHOLD、ABSDIFF、MIN、SAD 是雙輸入;SAD 的
+  `rd` 同時是累加器,屬 read-modify-write。
 - **硬體成本**:BITREV 幾乎只是接線;CLZ 需要優先編碼器／位元掃描;
-  ROTL 需要桶型移位器;THRESHOLD、ABSDIFF、SAD 需要比較器與加減法器。
-  CP4–CP6 應把這些單元放入 EX stage,檢查 critical path。
+  ROTL 需要桶型移位器;MIN、CLIP、THRESHOLD 需要比較器;ABSDIFF、SAD
+  需要加減法器(SAD 另有累加器)。CP4–CP6 應把這些單元放入 EX stage,
+  檢查 critical path。
 - **編碼衝突**:多組都用 `funct3=000`、`funct7=0000000`,同一顆 CPU 只能
-  支援一條;跨組比較不受影響,但整合多條時必須重新分配 funct。這是目前
-  設計內容最大的共同限制。
+  支援一條;跨組比較不受影響,但整合多條時必須重新分配 funct。建議的
+  整合分配見 2.5。
 - **未完成設計**:MIN、ABS、CLIP 只有 RV32IM 軟體實作,尚無自訂指令的欄位、
   機器碼與硬體設計;AVG、MAXPIX 只有 CP1 C baseline。
+
+### 2.5 整合用 custom-0 編碼建議
+
+各組獨立繳交時,多數採用 `funct3=000`、`funct7=0000000`;若要把多條
+自訂指令放進同一顆 CPU,這樣的編碼會互相碰撞。建議把 `funct3` 當成
+**運算格式／類別**,`funct7` 當成**同類別中的操作碼**:
+
+- `funct3` 只有 3 bits,最多 8 類,不足以一條一碼;但很適合區分
+  unary、binary、accumulate、compare/select、shift 等 operand 格式。
+- `funct7` 有 7 bits,每個類別可容納 128 個操作碼,足夠後續題目使用。
+- 同一 `funct3` 內以 `funct7` 區分;不同 `funct3` 的 `funct7` 可以重複,
+  因為解碼鍵是 `(funct3, funct7)` 這一對。
+
+THRESHOLD 已由助教指定 `000/0000000`,因此 compare/select 類別沿用 `000`;
+CLIP 放在同類別的 `0000001`。
+
+| funct3 | 類別 | 指令 | funct7 | rs2 用法 | 建議機器碼範例 |
+|---|---|---|---|---|---|
+| `000` | 比較／選擇 | THRESHOLD | `0000000` | 門檻 | `threshold a0,a0,a1` = `0x00B5050B` |
+| `000` | 比較／選擇 | CLIP | `0000001` | 不使用(固定 0) | `clip a0,a0` = `0x0205050B` |
+| `001` | 單輸入 | CLZ | `0000000` | 不使用(固定 0) | `clz x10,x11` = `0x0005950B` |
+| `001` | 單輸入 | BITREV | `0000001` | 不使用(固定 0) | `bitrev a0,a0` = `0x0205150B` |
+| `001` | 單輸入 | ABS | `0000010` | 不使用(固定 0) | `abs a0,a0` = `0x0405150B` |
+| `010` | 雙輸入算術 | MIN | `0000000` | 第二運算元 | `min a0,a0,a1` = `0x00B5250B` |
+| `010` | 雙輸入算術 | ABSDIFF | `0000001` | 第二運算元 | `absdiff a0,a0,a1` = `0x02B5250B` |
+| `011` | 保留(飽和／特殊算術) | — | — | — | 例如 ADDSAT |
+| `100` | 累加 | SAD | `0000000` | 第二運算元 | `sad t0,a0,a3` = `0x00D5428B` |
+| `101` | 移位／旋轉 | ROTL | `0000000` | 移位量(低 5 位) | `rotl a0,a1,a2` = `0x00C5D50B` |
+| `110` | 保留(packed／網路) | — | — | — | 例如 MAXPIX、NETMASK、CSUM16 |
+| `111` | 保留(位元統計／搜尋) | — | — | — | 例如 POPCOUNT、FINDZERO |
+
+> 這是**整合多條指令時的建議**,不是要覆蓋各組已繳交的 CP3 機器碼。
+> THRESHOLD 保留助教 10/27 公告的 `000/0000000`;其他組若採用此表,
+> 必須重新計算機器碼。`opcode` 仍全部是 `0001011`(custom-0)。
+> 同一內容的機器可讀版見 [`custom0_encoding_plan.csv`](custom0_encoding_plan.csv)。
 
 ## 三、資料來源
 

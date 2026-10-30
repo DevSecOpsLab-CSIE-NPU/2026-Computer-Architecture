@@ -1,0 +1,10 @@
+funct3,class,instruction,funct7,opcode,rs2_role,example_asm,machine_code,note
+000,compare_select,THRESHOLD,0000000,0001011,threshold,"threshold a0 a0 a1",0x00B5050B,keep TA 10/27 assignment
+000,compare_select,CLIP,0000001,0001011,unused (x0),"clip a0 a0",0x0205050B,implicit bounds -128/127
+001,unary,CLZ,0000000,0001011,unused (x0),"clz x10 x11",0x0005950B,single input
+001,unary,BITREV,0000001,0001011,unused (x0),"bitrev a0 a0",0x0205150B,single input
+001,unary,ABS,0000010,0001011,unused (x0),"abs a0 a0",0x0405150B,single input
+010,binary_arith,MIN,0000000,0001011,second operand,"min a0 a0 a1",0x00B5250B,signed min
+010,binary_arith,ABSDIFF,0000001,0001011,second operand,"absdiff a0 a0 a1",0x02B5250B,32-bit wrap
+100,accumulate,SAD,0000000,0001011,second operand,"sad t0 a0 a3",0x00D5428B,rd is accumulator
+101,shift_rotate,ROTL,0000000,0001011,shift amount,"rotl a0 a1 a2",0x00C5D50B,rs2[4:0]
