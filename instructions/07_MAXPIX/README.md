@@ -10,9 +10,7 @@
 
 正式語意與測試向量見 [HOMEWORK.md 第六節](../../HOMEWORK.md#六題目語意規格)。
 
-> 實作內容(規格、C 參考實作、RV32IM 組合語言、測資)由負責該指令的小組於倉庫中建立。
->
-> 目錄內容:`README.md`(本檔,含語意與繳交說明)。
+CP1 C baseline、CP2 RV32IM 實作及共用測資已分別放在 `c_baseline/`、`rv32im/`、`tests/`；CP2、CP3 報告各自見倉庫根目錄的 `report/CP2.md`、`report/CP3.md`，CP3 規格見 `spec/`。
 
 ## 小組資訊
 

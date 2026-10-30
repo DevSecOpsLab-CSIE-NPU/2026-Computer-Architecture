@@ -1,0 +1,13 @@
+case,input_hex,expected_decimal,notes
+1,0x0A1E2805,40,homework example
+2,0x00000000,0,all zero
+3,0xFF000001,255,maximum in most significant byte
+4,0x01020304,4,increasing bytes
+5,0x11223344,68,distinct values
+6,0x7F807F80,128,maximum in middle bytes
+7,0x0100FF00,255,maximum in byte 2
+8,0xAAAAAAAA,170,all bytes equal
+9,0x00FF00FF,255,tied maxima
+10,0x010101FF,255,maximum in least significant byte
+11,0x00000001,1,minimum nonzero value
+12,0xFFFFFFFF,255,all bytes at maximum
