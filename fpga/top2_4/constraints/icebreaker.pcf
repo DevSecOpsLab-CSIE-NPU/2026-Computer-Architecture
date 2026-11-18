@@ -1,0 +1,16 @@
+# iCEBreaker (iCE40UP5K-SG48) pin assignments
+# Source: https://github.com/osresearch/up5k/blob/master/icebreaker.pcf
+set_io -nowarn CLK 35
+
+# User button (active low)
+set_io -nowarn BTN_N 10
+
+# 8 LED outputs: PMOD2 on-board LEDs (5) + PMOD1 pins for external LEDs (3)
+set_io -nowarn LED[0] 27
+set_io -nowarn LED[1] 25
+set_io -nowarn LED[2] 21
+set_io -nowarn LED[3] 26
+set_io -nowarn LED[4] 23
+set_io -nowarn LED[5] 45
+set_io -nowarn LED[6] 47
+set_io -nowarn LED[7] 48
